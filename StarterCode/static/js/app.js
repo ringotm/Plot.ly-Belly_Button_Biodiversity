@@ -6,7 +6,7 @@ d3.json('../data/samples.json').then((data) => {
 
     subjectIDs = data.names;
 
-    console.log(subjectIDs);
+    //console.log(subjectIDs);
 
     subjectIDs.forEach((id) => {
         var option = document.createElement("option");
@@ -18,7 +18,8 @@ d3.json('../data/samples.json').then((data) => {
 
     function buildInitPlot() {
         first_row_samples = data.samples[0];
-        console.log(first_row_samples);
+        first_row_metadata = data.metadata[0];
+        //console.log(first_row_samples);
 
         first_row_sample_values = first_row_samples.sample_values;
         first_row_otuIDs = first_row_samples.otu_ids;
@@ -39,6 +40,7 @@ d3.json('../data/samples.json').then((data) => {
         var trace2 = {
             x: first_row_otuIDs,
             y: first_row_sample_values,
+            text: first_row_top10_labels,
             mode: 'markers',
             marker: {
                 color: first_row_otuIDs,
@@ -53,33 +55,54 @@ d3.json('../data/samples.json').then((data) => {
 
         var data2 = [trace2];
 
+        var data3 = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: first_row_metadata.wfreq,
+                title: { text: 'Washes per Week' },
+                type: 'indicator',
+                mode: 'gauge+number',
+                gauge: {
+                    axis: { range: [0, 9] }
+                }
+            }
+        ];
+
         var layout1 = {
             yaxis: {
                 type: 'category',
                 title: 'OTU ID'
             },
             xaxis: {
-                title: 'Sample Values'
+                title: 'Sample Value'
             }
         };
 
-        Plotly.newPlot("bar", data1, layout1);
-        Plotly.newPlot('bubble', data2);
+        var layout2 = {
+            yaxis: {
+                title: 'Sample Value'
+            },
+            xaxis: {
+                title: 'OTU ID'
+            }
+        };
 
-        first_row_metadata = data.metadata[0];
-        console.log(first_row_metadata);
+
+
+        Plotly.newPlot("bar", data1, layout1);
+        Plotly.newPlot('bubble', data2, layout2);
+        Plotly.newPlot('gauge', data3);
+
+        //first_row_metadata = data.metadata[0];
+        //console.log(first_row_metadata);
         panel = d3.select("#sample-metadata");
         new_list = panel.append('ul');
-        console.log(new_list);
+        //console.log(new_list);
         Object.entries(first_row_metadata).forEach(([key, value]) => {
             //console.log(key, value);
             new_div = panel.append('div');
             new_div.text(`${key}:  ${value}`);
 
-            // console.log(new_list_item);
-            //new_list_item.text = (`${key}:  ${value}`);
-            // console.log(new_list_item.text);
-            //panel.text("\n");
         });
 
 
@@ -87,81 +110,33 @@ d3.json('../data/samples.json').then((data) => {
 
     buildInitPlot();
 
-    function optionChanged(id) {
-        //var selection = d3.select("#selDataset");
-        // var id = selection.node().value;
+    //function optionChanged(id) {
+    //var selection = d3.select("#selDataset");
+    // var id = selection.node().value;
 
-        var samples = data.samples;
-        var current_samples = samples.filter((sample => sample.id === id));
-        console.log(current_samples);
-    };
-
-
-    var samples = data.samples;
-    //var test2 = test1.map(item => item.id);
-    //console.log(test1[0].id);
-    //console.log(test2);
-    //console.log(test1);
-
-    var top10samples = [];
-    var top10_otuIDs = [];
-    var reversed_samples = [];
-    var reversed_otuIDS = [];
-
-    //samples.forEach((sample) => {
-    //   if (sample.id === id) {
-    //console.log(sample.otu_ids);
-    // var otuIDS = sample.otu_ids;
-    // var sorted_by_sample_values = sample.sort((a, b) => b.sample_values - a.sample_values);
-    // var sample_values_sorted = sample_values.sort((a, b) => b - a);
-    // top10_samples = sample.sample_values.slice(0, 10).reverse();
-    // top10_otuIDs = sample.otu_ids.slice(0, 10).map(String).reverse();
-    // console.log(top10_samples);
-    // console.log(top10_otuIDs);
-    // Slice the first 10 objects for plotting
-    //slicedData = sortedByGreekSearch.slice(0, 10);
-
-    //};
-    // });
-
-    //var samples_test = samples.filter((sample => sample.id === id));
-    // console.log(samples_test);
-    // console.log(top10_samples);
-    // console.log(top10_otuIDs);
-    // var trace1 = {
-    //     x: top10_samples,
-    //    y: top10_otuIDs,
-    //     type: "bar",
-    //     orientation: "h"
-    //};
-
-    //var data1 = [trace1];
-
-    // var layout = {
-    //    yaxis: { type: 'category' }
-    //};
+    //    var samples = data.samples;
+    //    var current_samples = samples.filter((sample => sample.id === id));
+    //     console.log(current_samples);
+    // };
 
 
-    //Plotly.newPlot("bar", data1, layout);
 
 
-    //var otuIDS = data.samples[`$`].otu_ids;
-    //console.log(otuIDS);
+
 
 });
-
-console.log(subjectIDs);
-
 
 function buildPlot(id) {
     d3.json('../data/samples.json').then(function (data) {
 
         filtered_samples = data.samples.filter(sample => sample.id === id);
-        filtered_metadata = data.metadata.filter(item => item.id === id);
+        filtered_metadata = data.metadata.filter(item => item.id == id);
         filtered_labels = filtered_samples[0].otu_labels;
+        filtered_wfreq = filtered_metadata[0].wfreq;
         console.log(filtered_labels);
         console.log(filtered_samples);
         console.log(filtered_metadata);
+        console.log(filtered_wfreq);
         console.log(data.metadata);
 
         sample_values = filtered_samples[0].sample_values;
@@ -197,6 +172,21 @@ function buildPlot(id) {
 
         var data2 = [trace2];
 
+        var data3 = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: filtered_wfreq,
+                title: { text: 'Washes per Week' },
+                type: 'indicator',
+                mode: 'gauge+number',
+                colorscale: 'YlGnBu',
+                gauge: {
+                    axis: { range: [0, 9] },
+                    bar: { color: '#1F77B4' }
+                }
+            }
+        ];
+
         var layout1 = {
             yaxis: {
                 type: 'category',
@@ -218,9 +208,10 @@ function buildPlot(id) {
 
         Plotly.newPlot("bar", data1, layout1);
         Plotly.newPlot('bubble', data2, layout2);
+        Plotly.newPlot('gauge', data3);
 
         filtered_metadata = data.metadata.filter(item => item.id == id);
-        console.log(filtered_metadata);
+        console.log(filtered_metadata[0].wfreq);
         panel = d3.select("#sample-metadata");
         panel.html("");
         //new_list = panel.append('ul');
@@ -239,21 +230,9 @@ function buildPlot(id) {
 };
 
 function optionChanged(sel) {
-
-    //var selection = d3.select("#selDataset");
-    // var id = selection.node().value;
-    //d3.json('../data/samples.json').then((data) => {
-    //     var samples = data.samples;
-    //     var current_samples = samples.filter((sample => sample.id === id));
-    //     console.log(current_samples);
-    // };
     buildPlot(sel);
 };
 
-//function optionChanged(selection) {
-    // d3.event.preventDefault();
 
-   // var id = selection;
-   // console.log(id);
 
 
