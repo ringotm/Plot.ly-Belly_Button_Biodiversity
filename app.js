@@ -1,7 +1,7 @@
 
 
 
-d3.json('samples.json').then((data) => {
+d3.json('../../data/samples.json').then((data) => {
     console.log(data);
 
     subjectIDs = data.names;
@@ -127,7 +127,7 @@ d3.json('samples.json').then((data) => {
 });
 
 function buildPlot(id) {
-    d3.json('samples.json').then(function (data) {
+    d3.json('../../data/samples.json').then(function (data) {
 
         filtered_samples = data.samples.filter(sample => sample.id === id);
         filtered_metadata = data.metadata.filter(item => item.id == id);
