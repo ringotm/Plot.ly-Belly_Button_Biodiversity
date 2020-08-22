@@ -63,7 +63,8 @@ d3.json('samples.json').then((data) => {
                 type: 'indicator',
                 mode: 'gauge+number',
                 gauge: {
-                    axis: { range: [0, 9] }
+                    axis: { range: [0, 9] },
+                    bar: { color: '#1F77B4' }
                 }
             }
         ];
