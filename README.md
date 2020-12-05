@@ -4,7 +4,7 @@ Interactive dashboard designed using d3, javascript, and Plotly to explore the [
 
 The dataset reveals that a small handful of microbial species (also called operational taxonomic units, or OTUs, in the study) were present in more than 70% of people, while the rest were relatively rare.
 
-![dashboard.png](Images/dashboard.png)
+![dashboard.PNG](Images/dashboard.png)
 
 ### About the Data
 
